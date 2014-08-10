@@ -2,6 +2,7 @@ package com.steaz.climb;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 
 public class MyGame extends Game {
 	
@@ -16,7 +17,9 @@ public class MyGame extends Game {
 
 		menuScreen = new MenuScreen(this);
 		gameScreen = new GameScreen(this);
+		
 		Gdx.graphics.setDisplayMode(GAME_WIDTH, GAME_HEIGHT, false);
+		Gdx.input.setInputProcessor(gameScreen);
 		
 		setScreen(menuScreen);
 	}
@@ -31,6 +34,7 @@ public class MyGame extends Game {
 	}
 	
 	public void startNewGame() {
+		
 		setScreen(gameScreen);
 	}
 }

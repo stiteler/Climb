@@ -10,7 +10,7 @@ public class MenuScreen implements Screen {
 
 	private MyGame game;
 	private SpriteBatch spriteBatch;
-	private	Texture testImage;
+	private	Texture titleScreenTexture;
 	
 	
 	MenuScreen(MyGame game) {
@@ -23,7 +23,7 @@ public class MenuScreen implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		spriteBatch.begin();
-		spriteBatch.draw(testImage, 0, 0);
+		spriteBatch.draw(titleScreenTexture, 0, 0);
 		spriteBatch.end();
 		
 		
@@ -45,7 +45,7 @@ public class MenuScreen implements Screen {
 	public void show() {
 		// called when the screen is invoked with game.showScreen();
 		spriteBatch = new SpriteBatch();
-		testImage = new Texture(Gdx.files.internal("GameArt.png"));
+		titleScreenTexture = new Texture(Gdx.files.internal("titleScreen.png"));
 	}
 
 	@Override
