@@ -9,7 +9,6 @@ public class StalkChunk {
 
 	public StalkChunk(ChunkType chunkType) {
 		this.chunkType = chunkType;
-		//generateTexture();
 	}
 
 	public ChunkType getChunkType() {

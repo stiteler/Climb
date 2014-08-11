@@ -52,6 +52,11 @@ public class Stalk {
 		return newChunk;
 	}
 	
+	public void discardChunk() {
+		chunks.remove();
+		chunks.add(generateChunk());
+	}
+	
 	public StalkChunk getNextChunk() {
 		StalkChunk next = chunks.poll();
 		chunks.add(generateChunk());

@@ -5,23 +5,34 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GameScreen implements Screen, InputProcessor {
 	
+	private static final int stalkX = 168;
+	private static final int stalkHeight = 128;
+	private static final int climberY = 32;
+	private static final int climberXLeft = 272;
+	private static final int climberXRight = 416;
+	
 	private MyGame game;
 	private SpriteBatch spriteBatch;
+	private Climber climber;
 	private Stalk stalk;
+	private Texture climberRightTexture;
+	private Texture climberLeftTexture;
 	private Texture rightLeafTexture;
 	private Texture leftLeafTexture;
 	private Texture noLeafTexture;
 	private Texture backgroundTexture;
-	private static final int stalkX = 168;
-	private static final int stalkHeight = 128;
+	private BitmapFont startFont;
 	private boolean stalkChanged;
 	private List<ChunkType> stalkView;
+	private boolean isPlaying = false;
 	
 
 	public GameScreen(MyGame game) {
@@ -38,7 +49,20 @@ public class GameScreen implements Screen, InputProcessor {
 		rightLeafTexture = new Texture(Gdx.files.internal("rightLeaf.png"));
 		leftLeafTexture = new Texture(Gdx.files.internal("leftLeaf.png"));
 		noLeafTexture = new Texture(Gdx.files.internal("noLeaf.png"));
+		climberLeftTexture = new Texture(Gdx.files.internal("climberLeft.png"));
+		climberRightTexture = new Texture(Gdx.files.internal("climberRight.png"));
+		startFont = new BitmapFont();
+		startFont.setColor(Color.WHITE);
+		startFont.setScale(2);
 		stalkView = stalk.getStalkView();
+		
+		// climber can't spawn on a leaf.
+		if(stalkView.get(0) == ChunkType.LEFT_LEAF) {
+			climber = new Climber(Side.RIGHT);
+		} else {
+			climber = new Climber(Side.LEFT);
+		}
+		
 		stalkChanged = false;
 	}
 	
@@ -52,8 +76,21 @@ public class GameScreen implements Screen, InputProcessor {
 		spriteBatch.begin();
 		spriteBatch.draw(backgroundTexture, 0, 0);
 		drawStalkView();
+		drawClimber();
+		if(!isPlaying) {
+			startFont.draw(spriteBatch, "press any key to start game", 100, 640);
+		}
 		spriteBatch.end();
 		
+	}
+
+	private void drawClimber() {
+		Side side = climber.getSide();
+		if(side == Side.LEFT) {
+			spriteBatch.draw(climberLeftTexture, climberXLeft, climberY);
+		} else {
+			spriteBatch.draw(climberRightTexture, climberXRight, climberY);
+		}
 	}
 
 	private void drawStalkView() {
@@ -76,24 +113,48 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void updateGameState() {
 		if(stalkChanged == true) {
-			// do stuff for game logic.
-			System.out.println("Updating game state");
+			
+			//change model			
+			stalk.discardChunk();
 			stalkView = stalk.getStalkView();
 			stalkChanged = false;
+			
+			// check win/loss state
+			checkClimberCollision();
 		}
 		
 	}
 
-	private void touchedRightScreen() {
-		System.out.println("Touched Right Screen");
-		stalkChanged = true;
+	private void checkClimberCollision() {
+		if(stalkView.get(0) == ChunkType.LEFT_LEAF && climber.getSide() == Side.LEFT) {
+			gameOver();
+		}
 		
+		if(stalkView.get(0) == ChunkType.RIGHT_LEAF && climber.getSide() == Side.RIGHT) {
+			gameOver();
+		}
+	}
+
+	private void gameOver() {
+		game.gameOver();
+	}
+
+	private void touchedRightScreen() {
+		isPlaying = true;
+		System.out.println("Touched Right Screen");
+		if(climber != null) {
+			climber.setSide(Side.RIGHT);
+		}
+		stalkChanged = true;
 	}
 
 	private void touchedLeftScreen() {
+		isPlaying = true;
 		System.out.println("Touched Left Screen");
+		if(climber != null) {
+			climber.setSide(Side.LEFT);
+		}
 		stalkChanged = true;
-		
 	}
 	
 	@Override
@@ -104,43 +165,36 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -156,25 +210,21 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

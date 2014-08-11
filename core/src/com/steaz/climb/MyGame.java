@@ -11,17 +11,20 @@ public class MyGame extends Game {
 	
 	private MenuScreen menuScreen;
 	private GameScreen gameScreen;
+	private GameOverScreen gameOverScreen;
 	
 	@Override
 	public void create () {
 
 		menuScreen = new MenuScreen(this);
 		gameScreen = new GameScreen(this);
+		gameOverScreen = new GameOverScreen(this);
 		
 		Gdx.graphics.setDisplayMode(GAME_WIDTH, GAME_HEIGHT, false);
 		Gdx.input.setInputProcessor(gameScreen);
 		
 		setScreen(menuScreen);
+		
 	}
 
 	@Override
@@ -36,5 +39,9 @@ public class MyGame extends Game {
 	public void startNewGame() {
 		
 		setScreen(gameScreen);
+	}
+	
+	public void gameOver() {
+		setScreen(gameOverScreen);
 	}
 }
